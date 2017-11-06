@@ -53,6 +53,16 @@ namespace Microsoft.IdentityModel.Logging
         public static IdentityModelEventSource Logger { get; }
 
         /// <summary>
+        /// Flag which indicates whether or not PII is shown in logs. False by default.
+        /// </summary>
+        public static bool ShowPII { get; set; } = false;
+
+        /// <summary>
+        /// String that is used in place of any arguments to log messages if the 'ShowPII' flag is set to false.
+        /// </summary>
+        public static string HiddenPIIString { get; } = "[PII is hidden by default. Set the 'ShowPII' flag in IdentityModelEventSource.cs to true to reveal it.]";
+
+        /// <summary>
         /// Writes an event log by using the provided string argument and current UTC time.
         /// No level filtering is done on the event.
         /// </summary>
@@ -261,7 +271,11 @@ namespace Microsoft.IdentityModel.Logging
         {
             if (innerException != null)
             {
-                message = LogHelper.FormatInvariant("Message: {0}, InnerException: {1}", message, innerException.Message);
+                // if PII is turned off and 'innerException' is a System exception only display the exception type
+                if (!ShowPII && !LogHelper.IsCustomException(innerException))
+                    message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, InnerException: {1}", message, innerException.GetType());
+                else // otherwise it's safe to display the entire exception message
+                    message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, InnerException: {1}", message, innerException.Message);
             }
 
             switch (level)
