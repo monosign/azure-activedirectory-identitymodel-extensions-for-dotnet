@@ -345,7 +345,7 @@ namespace Microsoft.IdentityModel.Logging
             if (arg is Exception)
             {
                 Exception e = arg as Exception;
-                if (IsCustomException(e))
+                if (IsCustomException(e.GetType().FullName))
                     return e.ToString();
                 else
                     return e.GetType().ToString();
@@ -356,10 +356,15 @@ namespace Microsoft.IdentityModel.Logging
             }
         }
 
-        internal static bool IsCustomException(Exception ex)
+        /// <summary>
+        /// Checks if the exception was created in this solution.
+        /// </summary>
+        /// <param name="fullName">Full name of the exception.</param>
+        /// <returns>True if the exception is a custom exception, false otherwise.</returns>
+        public static bool IsCustomException(string fullName)
         {
             // check if the exception type has a custom exception prefix
-            if (CustomExceptionTypePrefixes.Exists(e => ex.GetType().FullName.Contains(e)))
+            if (CustomExceptionTypePrefixes.Exists(e => fullName.Contains(e)))
                 return true;
             else
                 return false;

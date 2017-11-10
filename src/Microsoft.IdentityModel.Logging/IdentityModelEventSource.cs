@@ -272,7 +272,7 @@ namespace Microsoft.IdentityModel.Logging
             if (innerException != null)
             {
                 // if PII is turned off and 'innerException' is a System exception only display the exception type
-                if (!ShowPII && !LogHelper.IsCustomException(innerException))
+                if (!ShowPII && !LogHelper.IsCustomException(innerException.GetType().FullName))
                     message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, InnerException: {1}", message, innerException.GetType());
                 else // otherwise it's safe to display the entire exception message
                     message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, InnerException: {1}", message, innerException.Message);
