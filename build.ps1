@@ -230,7 +230,7 @@ if ($pack -eq "YES")
 	{	
         $name = $project.name;
         Write-Host ">>> Start-Process -wait -NoNewWindow $dotnetexe 'pack' --no-build $root\src\$name -c $buildType -o $artifactsRoot -s"
-        Start-Process -wait -NoNewWindow $dotnetexe "pack $root\src\$name\$name.xproj --no-build -c $buildType -o $artifactsRoot -s"
+        Start-Process -wait -NoNewWindow $dotnetexe "pack $root\src\$name\ --no-build -c $buildType -o $artifactsRoot -s"
 	}
 }
 
