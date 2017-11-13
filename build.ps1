@@ -229,8 +229,8 @@ if ($pack -eq "YES")
 	foreach ($project in $projects)
 	{	
         $name = $project.name;
-        Write-Host ">>> Start-Process -wait -NoNewWindow $dotnetexe 'pack' --no-build $root\src\$name -c $buildType -o $artifactsRoot -s --include-symbols"
-        Start-Process -wait -NoNewWindow $dotnetexe "pack $root\src\$name\$name.xproj --no-build -c $buildType -o $artifactsRoot -s --include-symbols"
+        Write-Host ">>> Start-Process -wait -NoNewWindow $dotnetexe 'pack' --no-build $root\src\$name -c $buildType -o $artifactsRoot -s"
+        Start-Process -wait -NoNewWindow $dotnetexe "pack $root\src\$name\$name.xproj --no-build -c $buildType -o $artifactsRoot -s"
 	}
 }
 
