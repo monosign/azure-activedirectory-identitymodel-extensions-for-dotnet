@@ -37,7 +37,7 @@ if (($snTool -eq $null) -and ($snToolx64 -eq $null))
 Write-Host "Verify Signing..."
 
 $params = @("-vf", "")
-$filePatterns = @("Microsoft.IdentityModel.*.dll", "System.IdentityModel.Tokens.Jwt.dll")
+$filePatterns = @("Microsoft.IdentityModel.*.dll", "System.IdentityModel.Tokens.Jwt.dll", "System.IdentityModel.Tokens.Saml.dll")
 
 [xml]$buildConfiguration = Get-Content $root\buildConfiguration.xml
 $projects = $buildConfiguration.SelectNodes("root/projects/src/project")
