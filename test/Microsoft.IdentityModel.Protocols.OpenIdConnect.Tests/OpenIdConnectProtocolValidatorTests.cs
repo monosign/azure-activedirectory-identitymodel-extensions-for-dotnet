@@ -71,6 +71,13 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             return jwt;
         }
 
+        private static JwtSecurityToken CreateValidatedIdToken(string claimType, object claimValue, string alg)
+        {
+            var jwt = CreateValidatedIdToken(claimType, claimValue);
+            jwt.Header[JwtHeaderParameterNames.Alg] = alg;
+            return jwt;
+        }
+
         [Fact]
         public void GenerateNonce()
         {
@@ -725,18 +732,18 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         [Theory, MemberData(nameof(ValidateCHashTheoryData))]
         private void ValidateCHash(OidcProtocolValidatorTheoryData theoryData)
         {
-            TestUtilities.WriteHeader($"{this}.ValidateCHash", theoryData);
+            var context = TestUtilities.WriteHeader($"{this}.ValidateCHash", theoryData);
             try
             {
                 theoryData.ProtocolValidator.PublicValidateCHash(theoryData.ValidationContext);
-                theoryData.ExpectedException.ProcessNoException();
+                theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
             {
-                theoryData.ExpectedException.ProcessException(ex);
+                theoryData.ExpectedException.ProcessException(ex, context);
             }
 
-            return;
+            TestUtilities.AssertFailIfErrors(context);
         }
 
         public static TheoryData<OidcProtocolValidatorTheoryData> ValidateCHashTheoryData
@@ -834,12 +841,12 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                     ValidationContext = new OpenIdConnectProtocolValidationContext
                     {
                         ProtocolMessage = new OpenIdConnectMessage { Code = code },
-                        ValidatedIdToken = CreateValidatedIdToken(JwtRegisteredClaimNames.CHash, chash256)
+                        ValidatedIdToken = CreateValidatedIdToken(JwtRegisteredClaimNames.CHash, chash256, "none")
                     }
                 });
 
                 var jwtWithNoAlg = CreateValidatedIdToken(JwtRegisteredClaimNames.CHash, chash256);
-                jwtWithNoAlg.Header.Remove("alg");
+                //jwtWithNoAlg.Header.Remove("alg");
                 theoryData.Add(new OidcProtocolValidatorTheoryData
                 {
                     ExpectedException = new ExpectedException(typeof(OpenIdConnectProtocolInvalidCHashException), "IDX21347:", typeof(OpenIdConnectProtocolException)),

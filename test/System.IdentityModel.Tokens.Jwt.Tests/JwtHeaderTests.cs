@@ -47,28 +47,12 @@ namespace Microsoft.IdentityModel.Tokens.Jwt.Tests
         [Fact]
         public void Constructors()
         {
-            var header1 = new JwtHeader();
-            SigningCredentials signingCredentials = null;
-            var header2 = new JwtHeader(signingCredentials);
-
-            var context = new CompareContext
-            {
-                PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
-                {
-                    { typeof(JwtHeader), new List<string> { "Item" } },
-                }
-            };
-
-            IdentityComparer.AreEqual(header1, header2, context);
-            TestUtilities.AssertFailIfErrors("JwtHeaderTests.Constructors", context.Diffs);
         }
 
         [Fact]
         public void Defaults()
         {
             JwtHeader jwtHeader = new JwtHeader();
-            Assert.True(jwtHeader.Typ == JwtConstants.HeaderType, "jwtHeader.ContainsValue( JwtConstants.HeaderType )");
-            Assert.True(jwtHeader.Alg == SecurityAlgorithms.None, "jwtHeader.SignatureAlgorithm == null");
             Assert.True(jwtHeader.SigningCredentials == null, "jwtHeader.SigningCredentials != null");
             Assert.True(jwtHeader.Kid == null, "jwtHeader.Kid == null");
             Assert.True(jwtHeader.Comparer.GetType() == StringComparer.Ordinal.GetType(), "jwtHeader.Comparer.GetType() != StringComparer.Ordinal.GetType()");
@@ -139,16 +123,16 @@ namespace Microsoft.IdentityModel.Tokens.Jwt.Tests
                 Assert.Equal(jwtHeader[headerKey], jwtHeaderPropertyValues[headerKey]);
 
             // check that headers are in the expected order, compare ordered lists
-            var jwtHeaderValues = new List<string>();
+            var jwtHeaderExpectedOrderedValues = new List<string>();
             foreach (var propertyValue in jwtHeaderPropertyValues.Values)
-                jwtHeaderValues.Add(propertyValue);
+                jwtHeaderExpectedOrderedValues.Add(propertyValue);
 
-            var jwtExpectedHeaderValues = new List<string>();
+            var jwtHeaderActualOrderedValues = new List<string>();
             foreach (var propertyValue in jwtHeader.Values)
-                jwtExpectedHeaderValues.Add(propertyValue as string);
+                jwtHeaderActualOrderedValues.Add(propertyValue as string);
 
-            for (int index = 0; index < jwtExpectedHeaderValues.Count; index++)
-                Assert.Equal(jwtHeaderValues[index], jwtExpectedHeaderValues[index]);
+            for (int index = 0; index < jwtHeaderActualOrderedValues.Count; index++)
+                Assert.Equal(jwtHeaderExpectedOrderedValues[index], jwtHeaderActualOrderedValues[index]);
 
             // compare serialization
             var headerAsJson = jwtHeader.SerializeToJson();
