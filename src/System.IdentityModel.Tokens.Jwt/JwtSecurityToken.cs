@@ -204,6 +204,7 @@ namespace Microsoft.IdentityModel.Tokens.Jwt
             RawHeader = Header.Base64UrlEncode();
             RawPayload = Payload.Base64UrlEncode();
             RawSignature = string.Empty;
+            RawData = string.Concat(RawHeader, ".", RawPayload, ".", RawSignature);
         }
 
         /// <summary>
