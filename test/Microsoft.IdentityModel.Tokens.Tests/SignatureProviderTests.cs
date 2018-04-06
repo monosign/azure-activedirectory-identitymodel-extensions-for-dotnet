@@ -220,80 +220,200 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 ee.ProcessException(ex, errors);
             }
         }
-#endregion
+        #endregion
 
-#region Asymmetric Signature Provider Tests
-        [Fact]
-        public void AsymmetricSignatureProvider_Constructor()
+        #region Asymmetric Signature Provider Tests
+        public static TheoryData<SignatureProviderTheoryData> AsymmetricConstructorTheoryData
         {
-            AsymmetricSecurityKey privateKey = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key as AsymmetricSecurityKey;
-            AsymmetricSecurityKey publicKey = KeyingMaterial.DefaultX509SigningCreds_Public_2048_RsaSha2_Sha2.Key as AsymmetricSecurityKey;
-            string sha2SignatureAlgorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm;
-
-            // no errors
-            AsymmetricConstructorVariation("Signing:  - Creates with no errors", privateKey, sha2SignatureAlgorithm, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying: - Creates with no errors (Private Key)", privateKey, sha2SignatureAlgorithm, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying: - Creates with no errors (Public Key)", publicKey, sha2SignatureAlgorithm, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Signing:  - Creates with no errors", KeyingMaterial.ECDsa256Key, SecurityAlgorithms.EcdsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying: - Creates with no errors (Public Key)", KeyingMaterial.ECDsa256Key_Public, SecurityAlgorithms.EcdsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying: - Creates with no errors (Private Key)", KeyingMaterial.ECDsa256Key, SecurityAlgorithms.EcdsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying: - Creates with no errors (Public Key)", KeyingMaterial.ECDsa384Key_Public, SecurityAlgorithms.EcdsaSha384, ExpectedException.NoExceptionExpected);
-
-            // null, empty algorithm digest
-            AsymmetricConstructorVariation("Signing:   - NUll key", null, sha2SignatureAlgorithm, ExpectedException.ArgumentNullException());
-            AsymmetricConstructorVariation("Signing:   - SignatureAlorithm == null", privateKey, null, ExpectedException.NotSupportedException("IDX10634:"));
-            AsymmetricConstructorVariation("Signing:   - SignatureAlorithm == whitespace", privateKey, "    ", ExpectedException.NotSupportedException("IDX10634:"));
-
-            // No Private keys
-            AsymmetricConstructorVariation("Signing:   - SecurityKey without private key", publicKey, sha2SignatureAlgorithm, ExpectedException.InvalidOperationException("IDX10638:"));
-            AsymmetricConstructorVariation("Verifying: - SecurityKey without private key", publicKey, sha2SignatureAlgorithm, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Signing: - no private key", KeyingMaterial.ECDsa521Key_Public, SecurityAlgorithms.EcdsaSha512, ExpectedException.NoExceptionExpected);
-
-            // Signature algorithm not supported
-            AsymmetricConstructorVariation("Signing:   - SignatureAlgorithm not supported", KeyingMaterial.X509SecurityKey_1024, "SecurityAlgorithms.RsaSha256Signature", ExpectedException.NotSupportedException(substringExpected: "IDX10634:"));
-            AsymmetricConstructorVariation("Verifying: - SignatureAlgorithm not supported", KeyingMaterial.DefaultX509Key_Public_2048, "SecurityAlgorithms.RsaSha256Signature", ExpectedException.NotSupportedException(substringExpected: "IDX10634:"));
-
-            // constructing using jsonweb keys
-            AsymmetricConstructorVariation("Signing:  - Creates with no errors", KeyingMaterial.JsonWebKeyRsa256, SecurityAlgorithms.RsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying:  - Creates with no errors", KeyingMaterial.JsonWebKeyRsa256Public, SecurityAlgorithms.RsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Signing:  - Creates with no errors", KeyingMaterial.JsonWebKeyEcdsa256, SecurityAlgorithms.EcdsaSha256, ExpectedException.NoExceptionExpected);
-            AsymmetricConstructorVariation("Verifying:  - Creates with no errors", KeyingMaterial.JsonWebKeyEcdsa256Public, SecurityAlgorithms.EcdsaSha256, ExpectedException.NoExceptionExpected);
-
-            // constructing using a key with wrong key size:
-            AsymmetricConstructorVariation("Verifying:    - ECDSA with unmatched keysize", KeyingMaterial.ECDsa256Key, SecurityAlgorithms.EcdsaSha512, ExpectedException.NotSupportedException("IDX10641:"));
-            AsymmetricConstructorVariation("Verifying:    - JsonWebKey for ECDSA with unmatched keysize", KeyingMaterial.JsonWebKeyEcdsa256, SecurityAlgorithms.EcdsaSha512, ExpectedException.ArgumentOutOfRangeException("IDX10675:"));
-
-            // Constructing using a key with an incorrect 'X' value
-            AsymmetricConstructorVariation("Verifying:    - JsonWebKey for ECDSA with incorrect 'x' value", KeyingMaterial.JsonWebKeyPublicWrongX, SecurityAlgorithms.EcdsaSha512, ExpectedException.ArgumentOutOfRangeException("IDX10675:"));
-
-            // Constructing using a key with an incorrect 'Y' value
-            AsymmetricConstructorVariation("Verifying:    - JsonWebKey for ECDSA with incorrect 'y' value", KeyingMaterial.JsonWebKeyPublicWrongY, SecurityAlgorithms.EcdsaSha512, ExpectedException.ArgumentOutOfRangeException("IDX10675:"));
-
-            // Constructing using a key with an incorrect 'D' value
-            AsymmetricConstructorVariation("Verifying:    - JsonWebKey for ECDSA with incorrect 'd' value", KeyingMaterial.JsonWebKeyPrivateWrongD, SecurityAlgorithms.EcdsaSha512, ExpectedException.NoExceptionExpected);
+            get => new TheoryData<SignatureProviderTheoryData>
+            {
+                new SignatureProviderTheoryData
+                {
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm,
+                    First = true,
+                    Key = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key,
+                    TestId = "Signing:  - Creates with no errors",
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm,
+                    Key = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key,
+                    TestId = "Signing:  - Creates with no errors"
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - Creates with no errors (Private Key)",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key,
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - Creates with no errors (Public Key)",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_Public_2048_RsaSha2_Sha2.Key,
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:  - Creates with no errors",
+                    Key = KeyingMaterial.ECDsa256Key,
+                    Algorithm = SecurityAlgorithms.EcdsaSha256,
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - Creates with no errors (Public Key)",
+                    Key = KeyingMaterial.ECDsa256Key_Public,
+                    Algorithm = SecurityAlgorithms.EcdsaSha256
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - Creates with no errors (Private Key)",
+                    Key = KeyingMaterial.ECDsa256Key,
+                    Algorithm = SecurityAlgorithms.EcdsaSha256
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - Creates with no errors (Public Key)",
+                    Key = KeyingMaterial.ECDsa384Key_Public,
+                    Algorithm = SecurityAlgorithms.EcdsaSha384
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:   - NUll key",
+                    Key = null,
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm,
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:   - SignatureAlorithm == null",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key,
+                    Algorithm = null,
+                    ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:   - SignatureAlorithm == whitespace",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key,
+                    Algorithm = "    ",
+                    ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:   - SecurityKey without private key",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_Public_2048_RsaSha2_Sha2.Key,
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm,
+                    ExpectedException = ExpectedException.InvalidOperationException("IDX10638:"),
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - SecurityKey without private key",
+                    Key = KeyingMaterial.DefaultX509SigningCreds_Public_2048_RsaSha2_Sha2.Key,
+                    Algorithm = KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Algorithm,
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing: - no private key",
+                    Key = KeyingMaterial.ECDsa521Key_Public,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:   - SignatureAlgorithm not supported",
+                    Key = KeyingMaterial.X509SecurityKey_1024,
+                    Algorithm = "SecurityAlgorithms.RsaSha256Signature",
+                    ExpectedException = ExpectedException.NotSupportedException(substringExpected: "IDX10634:"),
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying: - SignatureAlgorithm not supported",
+                    Key = KeyingMaterial.DefaultX509Key_Public_2048,
+                    Algorithm = "SecurityAlgorithms.RsaSha256Signature",
+                    ExpectedException = ExpectedException.NotSupportedException(substringExpected: "IDX10634:"),
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:  - Creates with no errors",
+                    Key = KeyingMaterial.JsonWebKeyRsa256,
+                    Algorithm = SecurityAlgorithms.RsaSha256,
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:  - Creates with no errors",
+                    Key = KeyingMaterial.JsonWebKeyRsa256Public,
+                    Algorithm = SecurityAlgorithms.RsaSha256
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Signing:  - Creates with no errors",
+                    Key = KeyingMaterial.JsonWebKeyEcdsa256,
+                    Algorithm = SecurityAlgorithms.EcdsaSha256,
+                    WillCreateSignatures = true
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:  - Creates with no errors",
+                    Key = KeyingMaterial.JsonWebKeyEcdsa256Public,
+                    Algorithm = SecurityAlgorithms.EcdsaSha256
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:    - ECDSA with unmatched keysize",
+                    Key = KeyingMaterial.ECDsa256Key,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    ExpectedException = ExpectedException.NotSupportedException("IDX10641:")
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:    - JsonWebKey for ECDSA with unmatched keysize",
+                    Key = KeyingMaterial.JsonWebKeyEcdsa256,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    ExpectedException = ExpectedException.ArgumentOutOfRangeException("IDX10675:")
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:    - JsonWebKey for ECDSA with incorrect 'x' value",
+                    Key = KeyingMaterial.JsonWebKeyPublicWrongX,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    ExpectedException = ExpectedException.ArgumentOutOfRangeException("IDX10675:")
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:    - JsonWebKey for ECDSA with incorrect 'y' value",
+                    Key = KeyingMaterial.JsonWebKeyPublicWrongY,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    ExpectedException  = ExpectedException.ArgumentOutOfRangeException("IDX10675:")
+                },
+                new SignatureProviderTheoryData
+                {
+                    TestId = "Verifying:    - JsonWebKey for ECDSA with incorrect 'd' value",
+                    Key = KeyingMaterial.JsonWebKeyPrivateWrongD,
+                    Algorithm = SecurityAlgorithms.EcdsaSha512,
+                    ExpectedException = ExpectedException.ArgumentOutOfRangeException("IDX10675:")
+                }
+            };
         }
 
-        private void AsymmetricConstructorVariation(string testcase, SecurityKey key, string algorithm, ExpectedException expectedException)
+        [Theory, MemberData(nameof(AsymmetricConstructorTheoryData))]
+        public void AsymmetricConstructor(SignatureProviderTheoryData  theoryData)
         {
-            TestUtilities.WriteHeader($"{testcase}, {this}.AsymmetricConstructorVariation", true);
-            var context = new CompareContext(testcase);
-
-            AsymmetricSignatureProvider provider = null;
+            var context = TestUtilities.WriteHeader($"{this}.AsymmetricConstructor", theoryData);
             try
             {
-                if (testcase.StartsWith("Signing"))
-                {
-                    provider = new AsymmetricSignatureProvider(key, algorithm, true);
-                }
-                else
-                {
-                    provider = new AsymmetricSignatureProvider(key, algorithm, false);
-                }
-                expectedException.ProcessNoException(context);
+                new AsymmetricSignatureProvider(theoryData.Key, theoryData.Algorithm, theoryData.WillCreateSignatures);
+                theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
             {
-                expectedException.ProcessException(ex, context);
+                theoryData.ExpectedException.ProcessException(ex, context);
             }
 
             TestUtilities.AssertFailIfErrors(context);
@@ -1332,6 +1452,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         {
             return TestId + ", " + Algorithm + ", " + Key;
         }
+
+        public bool WillCreateSignatures { get; set; } = false;
     }
 }
 

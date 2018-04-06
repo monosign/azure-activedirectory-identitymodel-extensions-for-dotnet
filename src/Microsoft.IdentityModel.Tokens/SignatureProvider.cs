@@ -43,12 +43,14 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">'key' is null.</exception>
         protected SignatureProvider(SecurityKey key, string algorithm)
         {
-            if (key == null)
-                throw LogHelper.LogArgumentNullException(nameof(key));
-
-            Key = key;
+            Key = key ?? throw LogHelper.LogArgumentNullException(nameof(key));
             Algorithm = algorithm;
         }
+
+        /// <summary>
+        /// Gets or sets a bool indicating if the <see cref="SignatureProvider"/> will create signatures
+        /// </summary>
+        public bool WillCreateSignatures { get; protected set; }
 
         /// <summary>
         /// Gets or sets a user context for a <see cref="SignatureProvider"/>.

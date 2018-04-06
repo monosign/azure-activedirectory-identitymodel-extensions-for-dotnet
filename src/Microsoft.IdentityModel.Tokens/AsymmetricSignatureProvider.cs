@@ -130,6 +130,7 @@ namespace Microsoft.IdentityModel.Tokens
 
             ValidateAsymmetricSecurityKeySize(key, algorithm, willCreateSignatures);
             ResolveAsymmetricAlgorithm(key, algorithm, willCreateSignatures);
+            WillCreateSignatures = willCreateSignatures;
         }
 
         /// <summary>

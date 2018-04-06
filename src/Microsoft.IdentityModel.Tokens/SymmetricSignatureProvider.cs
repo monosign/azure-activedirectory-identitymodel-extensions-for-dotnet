@@ -79,6 +79,8 @@ namespace Microsoft.IdentityModel.Tokens
 
             if (_keyedHash == null)
                 throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10672, key, (algorithm ?? "null"))));
+
+            WillCreateSignatures = true;
         }
 
         /// <summary>
