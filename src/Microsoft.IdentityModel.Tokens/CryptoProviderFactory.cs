@@ -129,8 +129,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (key is SymmetricSecurityKey)
                 return true;
 
-            var jsonWebKey = key as JsonWebKey;
-            if (jsonWebKey != null)
+            if (key is JsonWebKey jsonWebKey)
                 return (jsonWebKey.K != null && jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.Octet);
 
             return false;
@@ -151,20 +150,18 @@ namespace Microsoft.IdentityModel.Tokens
                 if (key is RsaSecurityKey)
                     return true;
 
-                X509SecurityKey x509Key = key as X509SecurityKey;
-                if (x509Key != null)
+                if (key is X509SecurityKey x509Key)
                 {
 #if NETSTANDARD1_4
                     if (x509Key.PublicKey as RSA == null)
                         return false;
 #else
-                if (x509Key.PublicKey as RSACryptoServiceProvider == null)
-                    return false;
+                    if (x509Key.PublicKey as RSACryptoServiceProvider == null)
+                        return false;
 #endif
                 }
 
-                var jsonWebKey = key as JsonWebKey;
-                if (jsonWebKey != null && jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA)
+                if (key is JsonWebKey jsonWebKey && jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA)
                     return true;
 
                 return false;
@@ -187,8 +184,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (key as RsaSecurityKey != null)
                 return IsRsaAlgorithmSupported(algorithm);
 
-            var x509Key = key as X509SecurityKey;
-            if (x509Key != null)
+            if (key is X509SecurityKey x509Key)
             {
 #if NETSTANDARD1_4
                 if (x509Key.PublicKey as RSA == null)
@@ -200,8 +196,7 @@ namespace Microsoft.IdentityModel.Tokens
                 return IsRsaAlgorithmSupported(algorithm);
             }
 
-            JsonWebKey jsonWebKey = key as JsonWebKey;
-            if (jsonWebKey != null)
+            if (key is JsonWebKey jsonWebKey)
             {
                 if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA)
                     return IsRsaAlgorithmSupported(algorithm);
@@ -213,8 +208,7 @@ namespace Microsoft.IdentityModel.Tokens
                 return false;
             }
 
-            ECDsaSecurityKey ecdsaSecurityKey = key as ECDsaSecurityKey;
-            if (ecdsaSecurityKey != null)
+            if (key is ECDsaSecurityKey ecdsaSecurityKey)
                 return IsEcdsaAlgorithmSupported(algorithm);
 
             if (key as SymmetricSecurityKey != null)
@@ -363,29 +357,25 @@ namespace Microsoft.IdentityModel.Tokens
                 return keyWrapProvider;
             }
 
-            var rsaKey = key as RsaSecurityKey;
-            if (rsaKey != null && IsRsaAlgorithmSupported(algorithm))
+            if (key is RsaSecurityKey rsaKey && IsRsaAlgorithmSupported(algorithm))
                 return new RsaKeyWrapProvider(key, algorithm, willUnwrap);
 
-            var x509Key = key as X509SecurityKey;
-            if (x509Key != null && IsRsaAlgorithmSupported(algorithm))
+            if (key is X509SecurityKey x509Key && IsRsaAlgorithmSupported(algorithm))
                 return new RsaKeyWrapProvider(x509Key, algorithm, willUnwrap);
 
-            var jsonWebKey = key as JsonWebKey;
-            if (jsonWebKey != null)
+            if (key is JsonWebKey jsonWebKey)
             {
-                if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA &&  IsRsaAlgorithmSupported(algorithm))
+                if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.RSA && IsRsaAlgorithmSupported(algorithm))
                 {
                     return new RsaKeyWrapProvider(jsonWebKey, algorithm, willUnwrap);
                 }
-                else if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.Octet &&  IsSymmetricAlgorithmSupported(algorithm))
+                else if (jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.Octet && IsSymmetricAlgorithmSupported(algorithm))
                 {
                     return new SymmetricKeyWrapProvider(jsonWebKey, algorithm);
                 }
             }
 
-            var symmetricKey = key as SymmetricSecurityKey;
-            if ( symmetricKey != null && IsSymmetricAlgorithmSupported(algorithm))
+            if (key is SymmetricSecurityKey symmetricKey && IsSymmetricAlgorithmSupported(algorithm))
                 return new SymmetricKeyWrapProvider(symmetricKey, algorithm);
 
             throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10661, algorithm, key)));
@@ -419,7 +409,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns></returns>
         public virtual string GetSignatureProviderCacheKey(SecurityKey key, string algorithm, bool willCreateSignatures)
         {
-            return $"{key.GetType().ToString()}-{algorithm}-{willCreateSignatures}";
+            return $"{key.GetType().ToString()}-{key.KeyId}-{algorithm}-{willCreateSignatures}";
         }
 
         /// <summary>

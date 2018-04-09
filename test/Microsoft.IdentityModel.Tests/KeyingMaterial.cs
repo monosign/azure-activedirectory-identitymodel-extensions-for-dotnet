@@ -754,7 +754,7 @@ namespace Microsoft.IdentityModel.Tests
                     P = "_avCCyuo7hHlqu9Ec6R47ub_Ul_zNiS-xvkkuYwW-4lNnI66A5zMm_BOQVMnaCkBua1OmOgx7e63-jHFvG5lyrhyYEmkA2CS3kMCrI-dx0fvNMLEXInPxd4np_7GUd1_XzPZEkPxBhqf09kqryHMj_uf7UtPcrJNvFY-GNrzlJk",
                     Q = "7gvYRkpqM-SC883KImmy66eLiUrGE6G6_7Y8BS9oD4HhXcZ4rW6JJKuBzm7FlnsVhVGro9M-QQ_GSLaDoxOPQfHQq62ERt-y_lCzSsMeWHbqOMci_pbtvJknpMv4ifsQXKJ4Lnk_AlGr-5r5JR5rUHgPFzCk9dJt69ff3QhzG2c",
                     Kty = JsonWebAlgorithmsKeyTypes.RSA,
-                    Kid = "RsaSecurityKey_FromRsaParameters_2048"
+                    Kid = "JsonWebKeyRsa256"
                 };
             }
         }
@@ -773,7 +773,7 @@ namespace Microsoft.IdentityModel.Tests
                     E = "AQAB",
                     N = "6-FrFkt_TByQ_L5d7or-9PVAowpswxUe3dJeYFTY0Lgq7zKI5OQ5RnSrI0T9yrfnRzE9oOdd4zmVj9txVLI-yySvinAu3yQDQou2Ga42ML_-K4Jrd5clMUPRGMbXdV5Rl9zzB0s2JoZJedua5dwoQw0GkS5Z8YAXBEzULrup06fnB5n6x5r2y1C_8Ebp5cyE4Bjs7W68rUlyIlx1lzYvakxSnhUxSsjx7u_mIdywyGfgiT3tw0FsWvki_KYurAPR1BSMXhCzzZTkMWKE8IaLkhauw5MdxojxyBVuNY-J_elq-HgJ_dZK6g7vMNvXz2_vT-SykIkzwiD9eSI9UWfsjw",
                     Kty = JsonWebAlgorithmsKeyTypes.RSA,
-                    Kid = "RsaSecurityKey_FromRsaParameters_2048"
+                    Kid = "JsonWebKeyRsa256Public"
                 };
             }
         }
