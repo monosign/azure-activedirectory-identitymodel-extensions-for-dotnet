@@ -41,9 +41,13 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="key">The <see cref="SecurityKey"/> that will be used for signature operations.</param>
         /// <param name="algorithm">The signature algorithm to apply.</param>
         /// <exception cref="ArgumentNullException">'key' is null.</exception>
+        /// <exception cref="ArgumentNullException">'algorithm' is null or empty.</exception>
         protected SignatureProvider(SecurityKey key, string algorithm)
         {
             Key = key ?? throw LogHelper.LogArgumentNullException(nameof(key));
+            if (string.IsNullOrEmpty(algorithm))
+                throw LogHelper.LogArgumentNullException(nameof(algorithm));
+
             Algorithm = algorithm;
         }
 

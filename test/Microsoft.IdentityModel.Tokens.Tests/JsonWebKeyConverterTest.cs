@@ -101,7 +101,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     },
                     new ConverterTheoryData
                     {
-                        SecurityKey = KeyingMaterial.ECDsa256Key,
+                        SecurityKey = KeyingMaterial.Ecdsa256Key,
                         ExpectedException = ExpectedException.NotSupportedException("IDX10674"),
                         TestId = "Security key not supported test"
                     },

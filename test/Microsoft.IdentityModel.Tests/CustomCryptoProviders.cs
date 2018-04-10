@@ -226,6 +226,10 @@ namespace Microsoft.IdentityModel.Tests
         public bool IsSupportedAlgorithm(string algorithm, params object[] args)
         {
             IsSupportedAlgorithmCalled = true;
+            foreach (var alg in SupportedAlgorithms)
+                if (alg.Equals(algorithm, StringComparison.OrdinalIgnoreCase))
+                    return true;
+
             return IsSupportedResult;
         }
 
