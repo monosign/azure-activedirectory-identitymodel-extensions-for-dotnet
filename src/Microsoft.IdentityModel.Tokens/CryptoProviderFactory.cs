@@ -633,10 +633,11 @@ namespace Microsoft.IdentityModel.Tokens
             if (string.IsNullOrEmpty(signatureProvider.Key.KeyId))
                 return;
 
-            if (willCreateSignatures)
-                _signingSignatureProviders[GetSignatureProviderCacheKey(signatureProvider.Key, signatureProvider.Algorithm)] = signatureProvider;
-            else
-                _verifyingSignatureProviders[GetSignatureProviderCacheKey(signatureProvider.Key, signatureProvider.Algorithm)] = signatureProvider;
+            return;
+            //if (willCreateSignatures)
+            //    _signingSignatureProviders[GetSignatureProviderCacheKey(signatureProvider.Key, signatureProvider.Algorithm)] = signatureProvider;
+            //else
+            //    _verifyingSignatureProviders[GetSignatureProviderCacheKey(signatureProvider.Key, signatureProvider.Algorithm)] = signatureProvider;
         }
 
         private bool IsSupportedHashAlgorithm(string algorithm)

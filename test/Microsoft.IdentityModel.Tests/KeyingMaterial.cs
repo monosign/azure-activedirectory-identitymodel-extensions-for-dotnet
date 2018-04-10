@@ -783,7 +783,7 @@ namespace Microsoft.IdentityModel.Tests
             get => new SigningCredentials(JsonWebKeyRsa256Public, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256);
         }
 
-        public static JsonWebKey JsonWebKeyPublicWrongX
+        public static JsonWebKey JsonWebKeyP521WrongX_Public
         {
             get
             {
@@ -804,7 +804,7 @@ namespace Microsoft.IdentityModel.Tests
             }
         }
 
-        public static JsonWebKey JsonWebKeyPublicWrongY
+        public static JsonWebKey JsonWebKeyP521WrongY_Public
         {
             get
             {
@@ -824,7 +824,7 @@ namespace Microsoft.IdentityModel.Tests
             }
         }
 
-        public static JsonWebKey JsonWebKeyPrivateWrongD
+        public static JsonWebKey JsonWebKeyP521WrongD
         {
             get
             {
@@ -845,7 +845,7 @@ namespace Microsoft.IdentityModel.Tests
             }
         }
 
-        public static JsonWebKey JsonWebKeyEcdsa256
+        public static JsonWebKey JsonWebKeyP256
         {
             get
             {
@@ -862,7 +862,7 @@ namespace Microsoft.IdentityModel.Tests
             }
         }
 
-        public static JsonWebKey JsonWebKeyEcdsa256_Public
+        public static JsonWebKey JsonWebKeyP256_Public
         {
             get
             {
@@ -903,7 +903,7 @@ namespace Microsoft.IdentityModel.Tests
             }
         }
 
-        public static JsonWebKey JsonWebKeyDefaultX509Key_2048
+        public static JsonWebKey JsonWebKeyX509_2048
         {
             get
             {
